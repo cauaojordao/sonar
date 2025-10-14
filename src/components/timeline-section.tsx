@@ -22,7 +22,7 @@ function TimelineItem({
     const ref = useRef(null);
     const isInView = useInView(ref, {
         once: false,
-        margin: "-150px 0px" // Aumentei a margem para ativar mais tarde
+        margin: "-150px 0px"
     });
     const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -30,15 +30,22 @@ function TimelineItem({
         if (isInView && !hasAnimated) {
             const timer = setTimeout(() => {
                 setHasAnimated(true);
-            }, index * 200); // Delay baseado no índice para animação em cascata
+            }, index * 200);
             return () => clearTimeout(timer);
         }
     }, [isInView, hasAnimated, index]);
 
+    // Alinhamento do conteúdo no desktop
+    const isRight = align === "right";
+
     return (
         <motion.div
             ref={ref}
-            className="relative flex items-start gap-8"
+            className={`
+        relative flex items-start gap-6
+        flex-col sm:flex-row
+        ${isRight ? "md:flex-row-reverse md:text-right" : "md:text-left"}
+      `}
             initial={{ opacity: 0, y: 50 }}
             animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
             transition={{ duration: 0.8, delay: index * 0.2 }}
@@ -47,91 +54,62 @@ function TimelineItem({
                 <motion.div
                     className={`
             w-10 h-10 rounded-full border-2 flex items-center justify-center
-            ${hasAnimated
-                        ? "bg-accent/20 border-primary"
-                        : "bg-accent/20 border-muted"
-                    }
+            ${hasAnimated ? "bg-accent/20 border-primary" : "bg-accent/20 border-muted"}
           `}
                     whileHover={{ scale: 1.1 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
-                    <Icon className={`
-            w-5 h-5 transition-colors duration-500
-            ${hasAnimated ? "text-primary" : "text-muted"}
-          `} />
+                    <Icon
+                        className={`
+              w-5 h-5 transition-colors duration-500
+              ${hasAnimated ? "text-primary" : "text-muted"}
+            `}
+                    />
                 </motion.div>
             </div>
 
-            {align === "left" ? (
-                <>
-                    <div className="flex-1 max-w-2xl pt-1">
-                        <motion.h3
-                            className="text-xl font-bold mb-3"
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-                            transition={{ duration: 0.6, delay: index * 0.2 + 0.3 }}
-                        >
-                            {title}
-                        </motion.h3>
-                        <motion.p
-                            className="text-muted-foreground text-sm leading-relaxed mb-4"
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-                            transition={{ duration: 0.6, delay: index * 0.2 + 0.4 }}
-                        >
-                            {description}
-                        </motion.p>
-                        <motion.div
-                            className="bg-muted/10 border border-border rounded-lg p-4"
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-                            transition={{ duration: 0.6, delay: index * 0.2 + 0.5 }}
-                        >
-                            <p className="text-muted-foreground text-sm">
-                <span className="text-primary font-semibold">
-                  {align === "left" ? "Como é feito:" : "Benefício:"}
-                </span> {highlight}
-                            </p>
-                        </motion.div>
-                    </div>
-                    <div className="flex-1" />
-                </>
-            ) : (
-                <>
-                    <div className="flex-1" />
-                    <div className="flex-1 max-w-2xl pt-1 text-right">
-                        <motion.h3
-                            className="text-xl font-bold mb-3"
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-                            transition={{ duration: 0.6, delay: index * 0.2 + 0.3 }}
-                        >
-                            {title}
-                        </motion.h3>
-                        <motion.p
-                            className="text-muted-foreground text-sm leading-relaxed mb-4"
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-                            transition={{ duration: 0.6, delay: index * 0.2 + 0.4 }}
-                        >
-                            {description}
-                        </motion.p>
-                        <motion.div
-                            className="bg-muted/10 border border-border rounded-lg p-4"
-                            initial={{ opacity: 0, x: 30 }}
-                            animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-                            transition={{ duration: 0.6, delay: index * 0.2 + 0.5 }}
-                        >
-                            <p className="text-muted-foreground text-sm">
-                                <span className="text-primary font-semibold">Benefício:</span> {highlight}
-                            </p>
-                        </motion.div>
-                    </div>
-                </>
-            )}
+            <div
+                className={`
+          flex-1 w-full md:max-w-2xl pt-1
+          ${isRight ? "md:text-right" : "text-left"}
+        `}
+            >
+                <motion.h3
+                    className="text-xl font-bold mb-3"
+                    initial={{ opacity: 0, x: isRight ? 30 : -30 }}
+                    animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: isRight ? 30 : -30 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 + 0.3 }}
+                >
+                    {title}
+                </motion.h3>
+
+                <motion.p
+                    className="text-muted-foreground text-sm leading-relaxed mb-4"
+                    initial={{ opacity: 0, x: isRight ? 30 : -30 }}
+                    animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: isRight ? 30 : -30 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 + 0.4 }}
+                >
+                    {description}
+                </motion.p>
+
+                <motion.div
+                    className="bg-muted/10 border border-border rounded-lg p-4"
+                    initial={{ opacity: 0, x: isRight ? 30 : -30 }}
+                    animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: isRight ? 30 : -30 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 + 0.5 }}
+                >
+                    <p className="text-muted-foreground text-sm">
+            <span className="text-primary font-semibold">
+              {align === "left" ? "Como é feito:" : "Benefício:"}
+            </span>{" "}
+                        {highlight}
+                    </p>
+                </motion.div>
+            </div>
         </motion.div>
     );
 }
+
 
 function ProgressLine() {
     const sectionRef = useRef<HTMLDivElement>(null);

@@ -8,38 +8,54 @@ import { Button } from "@/components/ui/button"
 import { UploadCloud, FileX, CheckCircle2 } from "lucide-react"
 
 interface FileDropzoneProps {
-    onFileAccepted?: (file: File) => void
+    onUpload: (formData: FormData) => Promise<void> // server action
     className?: string
     tone?: "neutral" | "gold" | "magenta"
 }
 
 export function FileDropzone({
-                                 onFileAccepted,
+                                 onUpload,
                                  className,
-                                 tone = "neutral",
                              }: FileDropzoneProps) {
     const [file, setFile] = React.useState<File | null>(null)
     const [error, setError] = React.useState<string | null>(null)
+    const [uploading, setUploading] = React.useState(false)
 
     const onDrop = React.useCallback(
-        (acceptedFiles: File[], rejectedFiles: unknown[]) => {
-            if (rejectedFiles.length > 0) {
-                setError("Apenas arquivos .xmf são permitidos.")
-                return
-            }
+        (acceptedFiles: File[]) => {
             const selected = acceptedFiles[0]
-            setFile(selected)
-            setError(null)
-            onFileAccepted?.(selected)
+            if (selected && selected.name.endsWith(".mxf")) {
+                setFile(selected)
+                setError(null)
+            } else {
+                setError("Apenas arquivos .mxf são permitidos.")
+            }
         },
-        [onFileAccepted]
+        []
     )
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        accept: { "application/octet-stream": [".xmf"] },
+        accept: { "application/octet-stream": [".mxf"] },
         multiple: false,
         onDrop,
     })
+
+    async function handleUpload() {
+        if (!file) return
+        const formData = new FormData()
+        formData.append("file", file)
+
+        try {
+            setUploading(true)
+            await onUpload(formData)
+            setFile(null)
+        } catch (e) {
+            console.error(e)
+            setError("Falha no upload.")
+        } finally {
+            setUploading(false)
+        }
+    }
 
     const baseGlass = cn(
         "relative overflow-hidden rounded-[24px] border border-white/30 backdrop-blur-[11px]",
@@ -48,10 +64,6 @@ export function FileDropzone({
         isDragActive && "bg-white/30 border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.2)]",
         "hover:bg-white/10",
         error && "border-destructive/50 bg-destructive/10",
-        tone === "gold" &&
-        "bg-gradient-to-r from-[#C59A2E]/40 to-[#E9C46A]/40 hover:from-[#C59A2E]/60 hover:to-[#E9C46A]/60",
-        tone === "magenta" &&
-        "bg-gradient-to-r from-[#C4459F]/40 to-[#7B4397]/40 hover:from-[#C4459F]/60 hover:to-[#7B4397]/60",
         className
     )
 
@@ -67,23 +79,48 @@ export function FileDropzone({
 
                 {file ? (
                     <>
-                        <CheckCircle2 className="size-10 text-green-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]" />
-                        <p className="text-sm ">
+                        <CheckCircle2 className="size-10 drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]" />
+                        <p className="text-sm">
                             Arquivo selecionado: <strong>{file.name}</strong>
                         </p>
+
+                        <div className="flex gap-3 mt-3">
+                            <Button
+                                variant="glass"
+                                tone="primary"
+                                disabled={uploading}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleUpload()
+                                }}
+                            >
+                                {uploading ? "Enviando..." : "Enviar"}
+                            </Button>
+
+                            <Button
+                                variant="glass"
+                                tone="secondary"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    setFile(null)
+                                }}
+                            >
+                                Remover
+                            </Button>
+                        </div>
                     </>
                 ) : isDragActive ? (
                     <>
                         <UploadCloud className="size-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
-                        <p className="text-sm font-medium ">
-                            Solte o arquivo <strong>.xmf</strong> aqui
+                        <p className="text-sm font-medium">
+                            Solte o arquivo <strong>.mxf</strong> aqui
                         </p>
                     </>
                 ) : (
                     <>
                         <UploadCloud className="size-10" />
                         <p className="text-sm">
-                            Arraste um arquivo <strong>.xmf</strong> ou clique para selecionar
+                            Arraste um arquivo <strong>.mxf</strong> ou clique para selecionar
                         </p>
                     </>
                 )}
@@ -93,21 +130,6 @@ export function FileDropzone({
                         <FileX className="size-4" />
                         {error}
                     </div>
-                )}
-
-                {file && (
-                    <Button
-                        type="button"
-                        variant="glass"
-                        size="sm"
-                        tone="neutral"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            setFile(null)
-                        }}
-                    >
-                        Remover arquivo
-                    </Button>
                 )}
             </CardContent>
         </Card>

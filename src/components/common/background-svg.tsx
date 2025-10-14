@@ -25,7 +25,6 @@ export function FluidGradientBackground() {
             animate={{opacity: 1}}
             transition={{duration: 1.5, ease: "easeOut"}}
         >
-            {/* Gradiente Principal Animado */}
             <motion.div
                 className="absolute inset-0"
                 style={{
@@ -48,7 +47,7 @@ export function FluidGradientBackground() {
                                 <animate
                                     attributeName="stdDeviation"
                                     values="90;110;90"
-                                    dur="8s"
+                                    dur="4s"
                                     repeatCount="indefinite"
                                 />
                             </feGaussianBlur>
@@ -67,8 +66,8 @@ export function FluidGradientBackground() {
                                 offset="0%"
                                 animate={mounted ? {
                                     stopColor: isDark
-                                        ? ["#DB2777", "#EC4899", "#DB2777"]
-                                        : ["#2563EB", "#3B82F6", "#2563EB"]
+                                        ? ["#DB2777", "#361423", "#DB2777"]
+                                        : ["#2563EB", "#a9c5f6", "#2563EB"]
                                 } : undefined}
                                 transition={{
                                     duration: 6,
@@ -81,8 +80,8 @@ export function FluidGradientBackground() {
                                 offset="84.6227%"
                                 animate={mounted ? {
                                     stopColor: isDark
-                                        ? ["#F59E0B", "#FBBF24", "#F59E0B"]
-                                        : ["#06B6D4", "#22D3EE", "#06B6D4"]
+                                        ? ["#F59E0B", "#33280f", "#F59E0B"]
+                                        : ["#06B6D4", "#b9f6ff", "#06B6D4"]
                                 } : undefined}
                                 transition={{
                                     duration: 8,
@@ -187,7 +186,7 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                     className={`
                         absolute rounded-full backdrop-blur-md
                         ${isDark
-                        ? "bg-gradient-to-br from-pink-500/15 to-yellow-400/10 border border-pink-400/20"
+                        ? "bg-gradient-to-br from-pink-500/55 to-yellow-400/60 border border-pink-400/70"
                         : "bg-gradient-to-br from-blue-500/55 to-cyan-400/80 border border-blue-400/40"
                     }
                     `}

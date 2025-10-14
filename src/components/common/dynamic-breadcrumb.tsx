@@ -130,14 +130,14 @@ function DynamicBreadcrumb({
                     <div className="flex items-center gap-2" key={item.href}>
                         <BreadcrumbItem className="flex items-center">
                             {item.isCurrent ? (
-                                <BreadcrumbPage className="flex items-center">
+                                <BreadcrumbPage className="flex gap-1 items-center">
                                     {index === 0 && showHome && <Home className="size-4"/>}
                                     {item.label}
                                 </BreadcrumbPage>
                             ) : (
                                 <BreadcrumbLink
                                     href={item.href}
-                                    className="flex items-center hover:text-foreground/80 transition-colors"
+                                    className="flex gap-1 items-center hover:text-foreground/80 transition-colors"
                                     onClick={(e) => {
                                         e.preventDefault()
                                         router.push(item.href)
