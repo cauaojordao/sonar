@@ -29,17 +29,19 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
-        >
-            <FluidGradientBackground/>
-            <Header/>
-            <main className="min-h-screen">
-                <div className="container mx-auto px-6">
 
+        >
+            <div className="min-h-screen flex flex-col justify-between">
+                <FluidGradientBackground/>
+                <div className="container mx-auto px-6">
+                    <Header/>
                     <DynamicBreadcrumb/>
                 </div>
-                {children}
-            </main>
-            <Footer/>
+                <main>
+                    {children}
+                </main>
+                <Footer/>
+            </div>
         </ThemeProvider>
         </body>
         </html>

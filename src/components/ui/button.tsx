@@ -21,12 +21,12 @@ const buttonVariants = cva(
                 link: "text-primary underline-offset-4 hover:underline",
 
                 glass:
-                    "bg-white/20 border border-white/30 text-white backdrop-blur-[11px] shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-1px_0_rgba(255,255,255,0.1),inset_0_0_54px_27px_rgba(255,255,255,0.10)] hover:bg-white/30 transition-all duration-300",
+                    "bg-white/20 border border-white/30 backdrop-blur-[11px] shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-1px_0_rgba(255,255,255,0.1),inset_0_0_54px_27px_rgba(255,255,255,0.10)] hover:bg-white/30 transition-all duration-300",
             },
             tone: {
                 neutral: "",
-                gold: "bg-gradient-to-r from-[#C59A2E]/60 to-[#E9C46A]/40 hover:from-[#C59A2E]/60 hover:to-[#E9C46A]/60",
-                magenta: "bg-gradient-to-r from-[#C4459F]/60 to-[#7B4397]/40 hover:from-[#C4459F]/60 hover:to-[#7B4397]/60",
+                primary: "bg-gradient-to-r from-primary/60 to-bg-background/40 hover:from-primary/60 hover:to-bg-background/60",
+                secondary: "bg-gradient-to-r from-secondary/60 to-bg-background/40 hover:from-secondary/60 hover:to-bg-background/60",
             },
             size: {
                 default: "h-10 px-6 rounded-[24px]",
@@ -38,13 +38,13 @@ const buttonVariants = cva(
         compoundVariants: [
             {
                 variant: "glass",
-                tone: "gold",
-                class: "text-white hover:shadow-[0_0_20px_rgba(255,215,0,0.4)]",
+                tone: "primary",
+                class: "text-white hover:shadow-primary/60",
             },
             {
                 variant: "glass",
-                tone: "magenta",
-                class: "text-white hover:shadow-[0_0_20px_rgba(255,0,255,0.3)]",
+                tone: "secondary",
+                class: "text-white hover:shadow-secondary/60",
             },
         ],
         defaultVariants: {
