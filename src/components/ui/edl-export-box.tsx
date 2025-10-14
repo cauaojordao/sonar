@@ -11,7 +11,7 @@ interface CaixaDeTextoExportavelProps {
   titulo?: string;
 }
 
-const CaixaDeTextoExportavel: React.FC<CaixaDeTextoExportavelProps> = ({ 
+const EdlExportBox: React.FC<CaixaDeTextoExportavelProps> = ({
   texto, 
   nomeArquivo = 'relatorio.txt', 
   titulo = 'RESULTADOS' 
@@ -93,4 +93,4 @@ const CaixaDeTextoExportavel: React.FC<CaixaDeTextoExportavelProps> = ({
   );
 };
 
-export default CaixaDeTextoExportavel;
+export default EdlExportBox;
