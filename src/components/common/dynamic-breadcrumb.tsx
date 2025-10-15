@@ -1,9 +1,9 @@
 ﻿"use client"
 
 import * as React from "react"
-import {useRouter, usePathname} from "next/navigation"
-import {Home} from "lucide-react"
-import {cn} from "@/lib/utils"
+import { useRouter, usePathname } from "next/navigation"
+import { Home } from "lucide-react"
+import { cn } from "@/lib/utils"
 import {
     Breadcrumb,
     BreadcrumbItem, BreadcrumbLink,
@@ -12,7 +12,6 @@ import {
     BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
 
-// Interface para customização do breadcrumb
 interface BreadcrumbItemConfig {
     label: string
     href: string
@@ -29,31 +28,26 @@ interface DynamicBreadcrumbProps {
 }
 
 function DynamicBreadcrumb({
-                               homeLabel = "Home",
-                               className,
-                               separator,
-                               showHome = true,
-                               maxItems = 5,
-                               customLabels = {},
-                               ...props
-                           }: DynamicBreadcrumbProps & React.ComponentProps<"nav">) {
+    homeLabel = "Home",
+    className,
+    separator,
+    showHome = true,
+    maxItems = 5,
+    customLabels = {},
+    ...props
+}: DynamicBreadcrumbProps & React.ComponentProps<"nav">) {
     const router = useRouter()
     const pathname = usePathname()
 
-    // função para gerar os itens do breadcrumb baseado na URL
     const generateBreadcrumbItems = (): BreadcrumbItemConfig[] => {
         if (!pathname) return []
 
-        // remove query parameters e hash da URL
         const cleanPathname = pathname.split('?')[0].split('#')[0]
 
-        // divide a URL em segmentos
         const segments = cleanPathname.split('/').filter(segment => segment !== '')
 
-        // cria os itens do breadcrumb
         const items: BreadcrumbItemConfig[] = []
 
-        // adiciona home se configurado
         if (showHome) {
             items.push({
                 label: homeLabel,
@@ -62,12 +56,10 @@ function DynamicBreadcrumb({
             })
         }
 
-        // constrói os itens para cada segmento
         let accumulatedPath = ''
         segments.forEach((segment, index) => {
             accumulatedPath += `/${segment}`
 
-            // usa label customizado se disponível, caso contrário formata o segmento
             const label = customLabels[segment] ||
                 customLabels[accumulatedPath] ||
                 formatSegmentLabel(segment)
@@ -82,16 +74,13 @@ function DynamicBreadcrumb({
         return items
     }
 
-    // função para formatar labels dos segmentos
     const formatSegmentLabel = (segment: string): string => {
-        // remove hifens e underlines, capitaliza palavras
         return segment
             .replace(/[-_]/g, ' ')
             .replace(/\b\w/g, char => char.toUpperCase())
             .replace(/\b(a|e|o|de|do|da|dos|das|em|por)\b/gi, match => match.toLowerCase())
     }
 
-    // função para truncar breadcrumbs muito longos
     const getTruncatedItems = (items: BreadcrumbItemConfig[]): BreadcrumbItemConfig[] => {
         if (items.length <= maxItems) {
             return items
@@ -114,7 +103,6 @@ function DynamicBreadcrumb({
 
     const breadcrumbItems = getTruncatedItems(generateBreadcrumbItems())
 
-    // se não há itens, não renderiza nada
     if (breadcrumbItems.length === 0) {
         return null
     }
@@ -131,7 +119,7 @@ function DynamicBreadcrumb({
                         <BreadcrumbItem className="flex items-center">
                             {item.isCurrent ? (
                                 <BreadcrumbPage className="flex gap-1 items-center">
-                                    {index === 0 && showHome && <Home className="size-4"/>}
+                                    {index === 0 && showHome && <Home className="size-4" />}
                                     {item.label}
                                 </BreadcrumbPage>
                             ) : (
@@ -143,7 +131,7 @@ function DynamicBreadcrumb({
                                         router.push(item.href)
                                     }}
                                 >
-                                    {index === 0 && showHome && <Home className="size-4"/>}
+                                    {index === 0 && showHome && <Home className="size-4" />}
                                     {item.label}
                                 </BreadcrumbLink>
                             )}

@@ -5,13 +5,13 @@ import { useInView, motion, useScroll, useTransform } from "framer-motion";
 import { FileText, Mic, Music, Waves } from "lucide-react";
 
 function TimelineItem({
-                          icon: Icon,
-                          title,
-                          description,
-                          highlight,
-                          align = "left",
-                          index
-                      }: {
+    icon: Icon,
+    title,
+    description,
+    highlight,
+    align = "left",
+    index
+}: {
     icon: React.ComponentType<{ className?: string }>;
     title: string;
     description: string;
@@ -35,7 +35,6 @@ function TimelineItem({
         }
     }, [isInView, hasAnimated, index]);
 
-    // Alinhamento do conteúdo no desktop
     const isRight = align === "right";
 
     return (
@@ -99,9 +98,9 @@ function TimelineItem({
                     transition={{ duration: 0.6, delay: index * 0.2 + 0.5 }}
                 >
                     <p className="text-muted-foreground text-sm">
-            <span className="text-primary font-semibold">
-              {align === "left" ? "Como é feito:" : "Benefício:"}
-            </span>{" "}
+                        <span className="text-primary font-semibold">
+                            {align === "left" ? "Como é feito:" : "Benefício:"}
+                        </span>{" "}
                         {highlight}
                     </p>
                 </motion.div>
@@ -165,7 +164,6 @@ export function TimelineSection() {
 
     return (
         <section className="bg-background py-20 relative overflow-hidden">
-            {/* Gradiente estático adaptado ao tema */}
             <div className="absolute bottom-0 right-0 w-[500px] h-[500px]">
                 <div className="absolute inset-0 bg-gradient-to-tl from-accent/20 via-accent/10 to-transparent blur-[120px] rounded-full dark:from-accent/20 dark:via-accent/10" />
             </div>
@@ -180,15 +178,11 @@ export function TimelineSection() {
                     </h2>
                 </div>
 
-                {/* Timeline */}
                 <div className="relative">
-                    {/* Progress Line */}
                     <ProgressLine />
 
-                    {/* Static line background */}
                     <div className="absolute left-[19px] top-0 bottom-0 w-[2px] bg-muted/30" />
 
-                    {/* Timeline items */}
                     <div className="space-y-24">
                         {timelineItems.map((item, index) => (
                             <TimelineItem

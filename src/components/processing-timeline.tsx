@@ -35,7 +35,6 @@ export function ProcessingTimeline({
                                 key={index}
                                 className="flex flex-col items-center"
                             >
-                                {/* Bola */}
                                 <motion.div
                                     className={cn(
                                         "w-12 h-12 rounded-full flex items-center justify-center relative z-10",

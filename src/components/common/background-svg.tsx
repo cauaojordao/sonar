@@ -1,12 +1,12 @@
 ﻿"use client";
 
-import {motion} from "framer-motion";
-import {useTheme} from "next-themes";
-import {useEffect, useRef} from "react";
-import {useState} from 'react';
+import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
+import { useEffect, useRef } from "react";
+import { useState } from 'react';
 
 export function FluidGradientBackground() {
-    const {resolvedTheme} = useTheme();
+    const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -21,9 +21,9 @@ export function FluidGradientBackground() {
         <motion.div
             ref={containerRef}
             className="fixed inset-0 -z-10 overflow-hidden"
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            transition={{duration: 1.5, ease: "easeOut"}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
         >
             <motion.div
                 className="absolute inset-0"
@@ -40,7 +40,6 @@ export function FluidGradientBackground() {
                     preserveAspectRatio="xMidYMid slice"
                     className="absolute inset-0 w-full h-full"
                 >
-                    {/* Filtro de blur animado */}
                     <defs>
                         <filter id="fluid-blur">
                             <feGaussianBlur stdDeviation="100" result="blur">
@@ -62,7 +61,7 @@ export function FluidGradientBackground() {
                             gradientUnits="userSpaceOnUse"
                         >
                             <motion.stop
-                                stopColor={mounted ? (isDark ? "#DB2777" : "#2563EB") : "#DB2777"} // Default para dark no SSR
+                                stopColor={mounted ? (isDark ? "#DB2777" : "#2563EB") : "#DB2777"}
                                 offset="0%"
                                 animate={mounted ? {
                                     stopColor: isDark
@@ -76,7 +75,7 @@ export function FluidGradientBackground() {
                                 }}
                             />
                             <motion.stop
-                                stopColor={mounted ? (isDark ? "#F59E0B" : "#06B6D4") : "#F59E0B"} // Default para dark no SSR
+                                stopColor={mounted ? (isDark ? "#F59E0B" : "#06B6D4") : "#F59E0B"}
                                 offset="84.6227%"
                                 animate={mounted ? {
                                     stopColor: isDark
@@ -92,21 +91,19 @@ export function FluidGradientBackground() {
                             />
                         </linearGradient>
                     </defs>
-
-                    {/* Forma Principal com Múltiplas Camadas */}
                     <g filter="url(#fluid-blur)">
                         <motion.path
                             d="M1880.5 525.5C1971.98 12.7196 3186.5 1287.5 1984.5 1100C782.5 912.5 -988 800 -67.5 719C853 638 -18.1142 0.5 9.5 0.5C1390.5 753.5 1789.02 1038.28 1880.5 525.5Z"
                             fill="url(#fluid-gradient)"
-                            initial={{pathLength: 0, opacity: 0}}
+                            initial={{ pathLength: 0, opacity: 0 }}
                             animate={{
                                 pathLength: 1,
                                 opacity: 1,
                                 scale: [1, 1.02, 1]
                             }}
                             transition={{
-                                pathLength: {duration: 3, ease: "easeInOut"},
-                                opacity: {duration: 2},
+                                pathLength: { duration: 3, ease: "easeInOut" },
+                                opacity: { duration: 2 },
                                 scale: {
                                     duration: 10,
                                     repeat: Infinity,
@@ -116,7 +113,6 @@ export function FluidGradientBackground() {
                         />
                     </g>
 
-                    {/* Camada de Ruído Sutil para Textura */}
                     <filter id="noiseFilter">
                         <feTurbulence
                             type="fractalNoise"
@@ -131,15 +127,15 @@ export function FluidGradientBackground() {
                                 repeatCount="indefinite"
                             />
                         </feTurbulence>
-                        <feColorMatrix type="saturate" values="0"/>
-                        <feBlend in="SourceGraphic" mode="soft-light" result="noise"/>
+                        <feColorMatrix type="saturate" values="0" />
+                        <feBlend in="SourceGraphic" mode="soft-light" result="noise" />
                     </filter>
 
                     <motion.rect
                         width="100%"
                         height="100%"
                         filter="url(#noiseFilter)"
-                        opacity={mounted ? (isDark ? 0.03 : 0.02) : 0.03} // Default para dark no SSR
+                        opacity={mounted ? (isDark ? 0.03 : 0.02) : 0.03}
                         animate={mounted ? {
                             opacity: isDark ? [0.03, 0.06, 0.03] : [0.02, 0.04, 0.02]
                         } : undefined}
@@ -153,13 +149,12 @@ export function FluidGradientBackground() {
             </motion.div>
 
 
-            {mounted && <GlassBubbles isDark={isDark}/>}
+            {mounted && <GlassBubbles isDark={isDark} />}
         </motion.div>
     );
 }
 
-// Componente de Bolhas Glassmorphic - Sem reflexo interno
-function GlassBubbles({isDark}: { isDark: boolean }) {
+function GlassBubbles({ isDark }: { isDark: boolean }) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -168,14 +163,14 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
 
     if (!mounted) return null;
 
-    const bubbleConfigs = Array.from({length: 12}, (_, i) => ({
+    const bubbleConfigs = Array.from({ length: 12 }, (_, i) => ({
         id: i,
-        size: Math.random() * 35 + 25, // Tamanho entre 25px e 60px
+        size: Math.random() * 35 + 25,
         left: Math.random() * 100,
         top: Math.random() * 100,
-        duration: Math.random() * 20 + 20, // Duração aumentada: 20-40s
+        duration: Math.random() * 20 + 20,
         delay: Math.random() * 3,
-        opacity: Math.random() * 0.2 + 0.1, // Opacidade mais suave
+        opacity: Math.random() * 0.2 + 0.1,
     }));
 
     return (
@@ -186,9 +181,9 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                     className={`
                         absolute rounded-full backdrop-blur-md
                         ${isDark
-                        ? "bg-gradient-to-br from-pink-500/55 to-yellow-400/60 border border-pink-400/70"
-                        : "bg-gradient-to-br from-blue-500/55 to-cyan-400/80 border border-blue-400/40"
-                    }
+                            ? "bg-gradient-to-br from-pink-500/55 to-yellow-400/60 border border-pink-400/70"
+                            : "bg-gradient-to-br from-blue-500/55 to-cyan-400/80 border border-blue-400/40"
+                        }
                     `}
                     style={{
                         width: bubble.size,
@@ -203,7 +198,6 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                         `,
                     }}
                     animate={{
-                        // Movimento reduzido e mais suave
                         y: [0, -60, -100, -80, -20, 0],
                         x: [0, 15, -10, 8, -3, 0],
                         scale: [1, 1.05, 1.08, 1.05, 0.95, 1],
@@ -227,16 +221,15 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                 />
             ))}
 
-            {/* Bolhas pequenas reduzidas para 4 */}
-            {Array.from({length: 8}).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
                 <motion.div
                     key={`small-${i}`}
                     className={`
                         absolute rounded-full backdrop-blur-sm
                         ${isDark
-                        ? "bg-yellow-400/8 border border-yellow-300/10"
-                        : "bg-cyan-400/30 border border-cyan-300/60"
-                    }
+                            ? "bg-yellow-400/8 border border-yellow-300/10"
+                            : "bg-cyan-400/30 border border-cyan-300/60"
+                        }
                     `}
                     style={{
                         width: Math.random() * 12 + 6,
@@ -246,13 +239,12 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                         opacity: Math.random() * 0.3 + 0.1,
                     }}
                     animate={{
-                        // Movimento mais suave
                         y: [0, -50, -80, -40, 0],
                         x: [0, 8, -5, 3, 0],
                         scale: [1, 1.03, 1.05, 1.03, 1],
                     }}
                     transition={{
-                        duration: Math.random() * 15 + 15, // Mais lento
+                        duration: Math.random() * 15 + 15,
                         repeat: Infinity,
                         ease: "easeInOut",
                         delay: Math.random() * 5,
