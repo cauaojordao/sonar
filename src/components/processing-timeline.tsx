@@ -4,23 +4,15 @@ import {motion} from "framer-motion";
 import {Check, Loader2} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {Card, CardContent} from "@/components/ui/card";
-
-interface ProcessingTimelineProps {
-    steps: string[];
-    currentStep: number;
-}
+import baseGlass from "@/styles/baseGlass";
+import type {ProcessingTimelineProps} from "@/components/types";
 
 export function ProcessingTimeline({
                                        steps,
                                        currentStep,
                                    }: ProcessingTimelineProps) {
 
-    const baseGlass = cn(
-        "relative overflow-hidden rounded-[24px] border border-white/30 backdrop-blur-[11px]",
-        "shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-1px_0_rgba(255,255,255,0.1),inset_0_0_54px_27px_rgba(255,255,255,0.03)]",
-        "bg-transparent",
-        "py-32 w-full"
-    );
+
 
     return (
         <Card className={baseGlass}>

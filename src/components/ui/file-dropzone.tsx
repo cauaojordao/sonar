@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { UploadCloud, FileX, CheckCircle2 } from "lucide-react"
+import baseGlass from "@/styles/baseGlass";
 
 interface FileDropzoneProps {
     onUpload: (formData: FormData) => Promise<void> // server action
@@ -57,9 +58,7 @@ export function FileDropzone({
         }
     }
 
-    const baseGlass = cn(
-        "relative overflow-hidden rounded-[24px] border border-white/30 backdrop-blur-[11px]",
-        "shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-1px_0_rgba(255,255,255,0.1),inset_0_0_54px_27px_rgba(255,255,255,0.03)]",
+    const glassStyle = cn(baseGlass,
         "transition-all duration-300 ease-out cursor-pointer",
         isDragActive && "bg-white/30 border-white/40 shadow-[0_0_20px_rgba(255,255,255,0.2)]",
         "hover:bg-white/10",
@@ -71,7 +70,7 @@ export function FileDropzone({
         <Card {...getRootProps()} className={cn("border-none shadow-none bg-transparent", className)}>
             <CardContent
                 className={cn(
-                    baseGlass,
+                    glassStyle,
                     "flex flex-col items-center justify-center py-32 px-8 text-center space-y-3"
                 )}
             >

@@ -158,7 +158,6 @@ export function FluidGradientBackground() {
     );
 }
 
-// Componente de Bolhas Glassmorphic - Sem reflexo interno
 function GlassBubbles({isDark}: { isDark: boolean }) {
     const [mounted, setMounted] = useState(false);
 
@@ -170,12 +169,12 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
 
     const bubbleConfigs = Array.from({length: 12}, (_, i) => ({
         id: i,
-        size: Math.random() * 35 + 25, // Tamanho entre 25px e 60px
+        size: Math.random() * 35 + 25,
         left: Math.random() * 100,
         top: Math.random() * 100,
-        duration: Math.random() * 20 + 20, // Duração aumentada: 20-40s
+        duration: Math.random() * 20 + 20,
         delay: Math.random() * 3,
-        opacity: Math.random() * 0.2 + 0.1, // Opacidade mais suave
+        opacity: Math.random() * 0.2 + 0.1,
     }));
 
     return (
@@ -203,7 +202,6 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                         `,
                     }}
                     animate={{
-                        // Movimento reduzido e mais suave
                         y: [0, -60, -100, -80, -20, 0],
                         x: [0, 15, -10, 8, -3, 0],
                         scale: [1, 1.05, 1.08, 1.05, 0.95, 1],
@@ -227,7 +225,6 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                 />
             ))}
 
-            {/* Bolhas pequenas reduzidas para 4 */}
             {Array.from({length: 8}).map((_, i) => (
                 <motion.div
                     key={`small-${i}`}
@@ -246,13 +243,12 @@ function GlassBubbles({isDark}: { isDark: boolean }) {
                         opacity: Math.random() * 0.3 + 0.1,
                     }}
                     animate={{
-                        // Movimento mais suave
                         y: [0, -50, -80, -40, 0],
                         x: [0, 8, -5, 3, 0],
                         scale: [1, 1.03, 1.05, 1.03, 1],
                     }}
                     transition={{
-                        duration: Math.random() * 15 + 15, // Mais lento
+                        duration: Math.random() * 15 + 15,
                         repeat: Infinity,
                         ease: "easeInOut",
                         delay: Math.random() * 5,
