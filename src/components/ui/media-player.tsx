@@ -1,298 +1,274 @@
 ﻿"use client"
 
-import React, {useRef, useState, useEffect} from "react";
+import { useState, useRef, useEffect, useCallback } from "react"
+import { cn } from "@/lib/utils"
+import { ProgressBar } from "@/components/ui/media-player/progress-bar"
+import { VideoControls } from "@/components/ui/media-player/video-controls"
+import { MusicPopup } from "@/components/ui/media-player/music-popup"
+import { LoadingOverlay } from "@/components/ui/media-player/loading-overlay"
 
-import {Button} from "@/components/ui/button";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Switch} from "@/components/ui/switch";
-import {Play, Pause, Maximize2, Repeat} from "lucide-react";
-import {cn} from "@/lib/utils";
+export interface VideoSegment {
+    id: string
+    music: string
+    author: string
+    genre: string
+    startTime: number
+    endTime: number
+    color: string
+}
 
-const BaseGlass = cn(
-    "relative overflow-hidden rounded-[24px] border border-white/30 backdrop-blur-[11px]",
-    "shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-1px_0_rgba(255,255,255,0.1),inset_0_0_54px_27px_rgba(255,255,255,0.03)]",
-    "transition-all duration-300 ease-out");
+interface MediaPlayerProps {
+    videoSrc: string
+    segments: VideoSegment[]
+    className?: string
+}
 
-const MOCK_SEGMENTS = [
-    {start: 0, end: 2, label: "Pop", colorKey: "neon1"},
-    {start: 5, end: 7, label: "Eletrônica", colorKey: "neon2"},
-    {start: 8, end: 10, label: "Rock", colorKey: "neon3"},
-];
+export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps) {
+    const videoRef = useRef<HTMLVideoElement>(null)
+    const [isPlaying, setIsPlaying] = useState(false)
+    const [currentTime, setCurrentTime] = useState(0)
+    const [duration, setDuration] = useState(0)
+    const [volume, setVolume] = useState(1)
+    const [isMuted, setIsMuted] = useState(false)
+    const [playbackRate, setPlaybackRate] = useState(1)
+    const [skipEmptySegments, setSkipEmptySegments] = useState(false)
+    const [currentSegmentIndex, setCurrentSegmentIndex] = useState<number>(-1)
+    const [isFullscreen, setIsFullscreen] = useState(false)
+    const [isHovering, setIsHovering] = useState(false)
+    const [showPopup, setShowPopup] = useState(false)
+    const [isSeeking, setIsSeeking] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const popupTimeoutRef = useRef<number | null>(null)
+    const segmentTransitionRef = useRef(false)
 
-// Map color keys to CSS variables (use your global.css variables)
-const NEON_COLORS: Record<string, string> = {
-    neon1: "var(--chart-color-1, #ffb300)",
-    neon2: "var(--chart-color-2, #7c3aed)",
-    neon3: "var(--chart-color-3, #00d084)",
-    default: "var(--primary)",
-};
-
-export default function MediaPlayer() {
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const containerRef = useRef<HTMLDivElement | null>(null);
-
-    const [playing, setPlaying] = useState(false);
-    const [duration, setDuration] = useState(0);
-    const [time, setTime] = useState(0);
-    const [speed, setSpeed] = useState<number>(1);
-    const [autoSkipSilent, setAutoSkipSilent] = useState(false);
-    const [segments, setSegments] = useState(MOCK_SEGMENTS);
-    const [isClient, setIsClient] = useState(false);
-
-
-    // Compute which ranges are silent (inverse of segments)
-    const computeSilentRanges = (segs: typeof segments, total: number) => {
-        if (segs.length === 0) return [{start: 0, end: total}];
-        const sorted = segs.slice().sort((a, b) => a.start - b.start);
-        const silent: { start: number; end: number }[] = [];
-        let last = 0;
-        for (const s of sorted) {
-            if (s.start > last) silent.push({start: last, end: s.start});
-            last = Math.max(last, s.end);
+    const handleNextSegment = useCallback(() => {
+        const video = videoRef.current
+        if (!video || segments.length === 0) return
+        let nextIndex = currentSegmentIndex + 1
+        while (nextIndex < segments.length && !segments[nextIndex].music) {
+            nextIndex++
         }
-        if (last < total) silent.push({start: last, end: total});
-        return silent;
-    };
-
-    useEffect(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        const onLoaded = () => setDuration(v.duration || 0);
-        const onTime = () => setTime(v.currentTime || 0);
-        v.addEventListener("loadedmetadata", onLoaded);
-        v.addEventListener("timeupdate", onTime);
-        return () => {
-            v.removeEventListener("loadedmetadata", onLoaded);
-            v.removeEventListener("timeupdate", onTime);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!autoSkipSilent) return;
-        const v = videoRef.current;
-        if (!v || duration === 0) return;
-
-        const check = () => {
-            const silent = computeSilentRanges(segments, duration);
-            const t = v.currentTime;
-            for (const s of silent) {
-                if (t >= s.start && t < s.end) {
-                    const next = segments.find((seg) => seg.start >= s.end || seg.start > t);
-                    if (next) {
-                        v.currentTime = next.start + 0.01; // tiny offset
-                    } else {
-                        // no next music, go to end
-                        v.currentTime = duration;
-                        v.pause();
-                        setPlaying(false);
-                    }
-                    break;
-                }
-            }
-        };
-
-        const id = setInterval(check, 300); // check periodically while enabled
-        return () => clearInterval(id);
-    }, [autoSkipSilent, segments, duration]);
-
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    if (!isClient) return null;
-
-    const togglePlay = async () => {
-        const v = videoRef.current;
-        if (!v) return;
-        if (v.paused) {
-            await v.play();
-            setPlaying(true);
+        if (nextIndex < segments.length) {
+            const nextSeg = segments[nextIndex]
+            video.currentTime = nextSeg.startTime
+            setCurrentSegmentIndex(nextIndex)
         } else {
-            v.pause();
-            setPlaying(false);
+            video.pause()
+            setIsPlaying(false)
         }
-    };
+    }, [currentSegmentIndex, segments])
 
-    const seekTo = (seconds: number) => {
-        const v = videoRef.current;
-        if (!v) return;
-        v.currentTime = Math.max(0, Math.min(seconds, duration));
-        setTime(v.currentTime);
-    };
-
-    const onProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        const el = e.currentTarget;
-        const rect = el.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const ratio = x / rect.width;
-        seekTo(ratio * duration);
-    };
-
-    const formatTime = (s: number) => {
-        if (!isFinite(s) || isNaN(s)) return "0:00";
-        const mm = Math.floor(s / 60);
-        const ss = Math.floor(s % 60)
-            .toString()
-            .padStart(2, "0");
-        return `${mm}:${ss}`;
-    };
-
-    const toggleFullscreen = async () => {
-        const el = containerRef.current;
-        if (!el) return;
-        if (!document.fullscreenElement) await el.requestFullscreen?.();
-        else await document.exitFullscreen?.();
-    };
-
-    const handleSpeedChange = (value: number) => {
-        setSpeed(value);
-        if (videoRef.current) videoRef.current.playbackRate = value;
-    };
-
-    const skipToNextMusic = () => {
-        const v = videoRef.current;
-        if (!v) return;
-        const t = v.currentTime;
-        const next = segments.find((s) => s.end > t && s.start > t) || segments.find((s) => s.start > t);
-        if (next) seekTo(next.start + 0.01);
-    };
-
-    // Paint markers position in percent
-    const markerLeft = (timeSec: number) => (duration > 0 ? (timeSec / duration) * 100 : 0);
-    const progress = duration > 0 ? (time / duration) * 100 : 0;
-
-    return (
-        <div ref={containerRef} className={cn(BaseGlass, "w-full max-w-full p-4 bg-white/5")}>
-            <div
-                className="w-full rounded-[12px] overflow-hidden bg-black/40 relative"
-                ref={containerRef}
-            >
-                <video
-                    ref={videoRef}
-                    src="/freeMXF-mxf1.mp4"
-                    crossOrigin="anonymous"
-                    preload="metadata"
-                    className="w-full max-h-[80vh] object-contain bg-black"
-                    controls={false}
-                    onLoadedMetadata={() => {
-                        const v = videoRef.current;
-                        if (!v) return;
-
-                        const dur = v.duration;
-                        if (isFinite(dur) && dur > 0) {
-                            console.log("🎬 Duração detectada:", dur);
-                            setDuration(dur);
-                        } else {
-                            console.warn("⚠️ Duração não detectada, tentando fallback...");
-                            // fallback: força leitura depois de um pequeno atraso
-                            setTimeout(() => {
-                                if (v.duration && isFinite(v.duration)) setDuration(v.duration);
-                            }, 800);
-                        }
-                    }}
-                    onError={(e) => {
-                        console.error("❌ Erro ao carregar vídeo:", e);
-                    }}
-                />
-                {/* Overlaid controls area */
+    useEffect(() => {
+        const video = videoRef.current
+        if (!video) return
+        const handleLoadedMetadata = () => setDuration(video.duration)
+        const handleTimeUpdate = () => {
+            const t = video.currentTime
+            setCurrentTime(t)
+            const newIndex = segments.findIndex(seg => t >= seg.startTime && t < seg.endTime)
+            if (newIndex !== currentSegmentIndex) {
+                setCurrentSegmentIndex(newIndex)
+            }
+            if (skipEmptySegments) {
+                const currentSegment = segments[newIndex]
+                if ((!currentSegment || !currentSegment.music) && !segmentTransitionRef.current) {
+                    segmentTransitionRef.current = true
+                    const next = segments.find(seg => seg.startTime > t && seg.music)
+                    if (next) {
+                        video.currentTime = next.startTime
+                        setCurrentSegmentIndex(segments.indexOf(next))
+                    } else {
+                        video.pause()
+                        setIsPlaying(false)
+                    }
+                    setTimeout(() => {
+                        segmentTransitionRef.current = false
+                    }, 200)
                 }
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                    {/* Progress + markers */}
-                    <div className="w-full">
-                        <div
-                            className="relative h-3 rounded-full bg-white/20 cursor-pointer"
-                            onClick={onProgressClick}
-                            aria-label="Progress bar"
-                        >
-                            <div
-                                className="absolute left-0 top-0 bottom-0 rounded-full bg-white"
-                                style={{ width: `${progress}%`, opacity: 0.95 }}
+            } else {
+                segmentTransitionRef.current = false
+            }
+        }
+        const handleEnded = () => setIsPlaying(false)
+        video.addEventListener("loadedmetadata", handleLoadedMetadata)
+        video.addEventListener("timeupdate", handleTimeUpdate)
+        video.addEventListener("ended", handleEnded)
+        if (video.readyState >= 1) setDuration(video.duration)
+        return () => {
+            video.removeEventListener("loadedmetadata", handleLoadedMetadata)
+            video.removeEventListener("timeupdate", handleTimeUpdate)
+            video.removeEventListener("ended", handleEnded)
+        }
+    }, [segments, skipEmptySegments, currentSegmentIndex, handleNextSegment])
 
+    useEffect(() => {
+        if (popupTimeoutRef.current) {
+            window.clearTimeout(popupTimeoutRef.current)
+            popupTimeoutRef.current = null
+        }
+        const seg = segments[currentSegmentIndex]
+        if (currentSegmentIndex !== -1 && seg?.music) {
+            setShowPopup(true)
+            popupTimeoutRef.current = window.setTimeout(() => {
+                setShowPopup(false)
+                popupTimeoutRef.current = null
+            }, 3000)
+        } else {
+            setShowPopup(false)
+        }
+        return () => {
+            if (popupTimeoutRef.current) {
+                window.clearTimeout(popupTimeoutRef.current)
+                popupTimeoutRef.current = null
+            }
+        }
+    }, [currentSegmentIndex, segments])
 
-                            />
+    useEffect(() => {
+        if (!isPlaying) {
+            setIsLoading(false)
+            return
+        }
+        const lastTime = currentTime
+        let timeout: NodeJS.Timeout | null = null
+        function checkStuck() {
+            if (isPlaying && videoRef.current && Math.abs(videoRef.current.currentTime - lastTime) < 0.01) {
+                setIsLoading(true)
+            } else {
+                setIsLoading(false)
+            }
+        }
+        timeout = setTimeout(checkStuck, 600)
+        return () => {
+            if (timeout) clearTimeout(timeout)
+        }
+    }, [isPlaying, currentTime])
 
-                            {/* markers for music segments */}
-                            {segments.map((seg, i) => {
-                                const left = markerLeft(seg.start);
-                                const width = ((seg.end - seg.start) / Math.max(duration, 1)) * 100;
-                                return (
-                                    <div
-                                        key={i}
-                                        title={`${seg.label} ${formatTime(seg.start)} - ${formatTime(seg.end)}`}
-                                        className="absolute top-0 bottom-0 rounded-full opacity-95"
-                                        style={{
-                                            left: `${left}%`,
-                                            width: `${width}%`,
-                                            background: NEON_COLORS[seg.colorKey] || NEON_COLORS.default,
-                                            boxShadow: `0 0 12px ${NEON_COLORS[seg.colorKey] || NEON_COLORS.default}`,
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            seekTo(seg.start + 0.01);
-                                        }}
-                                    />
-                                );
-                            })}
-
-                            {/* scrub handle */}
-                            <div
-                                className="absolute top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full border border-white/80 bg-white shadow-lg"
-                                style={{left: `${(time / Math.max(duration, 1)) * 100}%`, transformOrigin: "center"}}
-                            />
-                        </div>
-
-                        {/* Controls row */}
-                        <div className="mt-3 flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={togglePlay}
-                                    className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center"
-                                    aria-label="play-pause"
-                                >
-                                    {playing ? <Pause/> : <Play/>}
-                                </button>
-
-                                <div className="text-sm text-white/80">{formatTime(time)} / {formatTime(duration)}</div>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/8">
-                                    <div className="flex items-center gap-2">
-                                        <Repeat size={16}/>
-                                        <span className="text-sm">Pular trechos sem música</span>
-                                    </div>
-                                    <Switch checked={autoSkipSilent} onCheckedChange={setAutoSkipSilent}/>
-                                </div>
-
-                                <Button variant="ghost" onClick={skipToNextMusic}>Pular agora</Button>
-
-                                <div className="flex items-center gap-2">
-                                    <Select onValueChange={(v: unknown) => handleSpeedChange(Number(v))}>
-                                        <SelectTrigger className="w-[72px]">
-                                            <SelectValue placeholder={`${speed}x`}/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="0.5">0.5x</SelectItem>
-                                            <SelectItem value="0.75">0.75x</SelectItem>
-                                            <SelectItem value="1">1x</SelectItem>
-                                            <SelectItem value="1.25">1.25x</SelectItem>
-                                            <SelectItem value="1.5">1.5x</SelectItem>
-                                            <SelectItem value="2">2x</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                <button onClick={toggleFullscreen}
-                                        className="w-10 h-10 rounded-full bg-white/6 flex items-center justify-center">
-                                    <Maximize2 size={16}/>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+    const togglePlay = () => {
+        const video = videoRef.current
+        if (!video) return
+        if (isPlaying) {
+            video.pause()
+        } else {
+            video.play().catch(() => {})
+        }
+        setIsPlaying(!isPlaying)
+    }
+    const handleVolumeChange = (value: number) => {
+        const video = videoRef.current
+        if (!video) return
+        video.volume = value
+        setVolume(value)
+        setIsMuted(value === 0)
+    }
+    const toggleMute = () => {
+        const video = videoRef.current
+        if (!video) return
+        if (isMuted) {
+            video.volume = volume || 0.5
+            setIsMuted(false)
+        } else {
+            video.volume = 0
+            setIsMuted(true)
+        }
+    }
+    const cyclePlaybackRate = () => {
+        const rates = [0.5, 0.75, 1, 1.25, 1.5, 2]
+        const currentIndex = rates.indexOf(playbackRate)
+        const nextIndex = (currentIndex + 1) % rates.length
+        const newRate = rates[nextIndex]
+        if (videoRef.current) {
+            videoRef.current.playbackRate = newRate
+        }
+        setPlaybackRate(newRate)
+    }
+    const toggleFullscreen = () => {
+        const container = videoRef.current?.parentElement
+        if (!container) return
+        if (!isFullscreen) {
+            if (container.requestFullscreen) {
+                container.requestFullscreen()
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen()
+            }
+        }
+        setIsFullscreen(!isFullscreen)
+    }
+    const formatTime = (time: number) => {
+        if (!isFinite(time)) return "00:00"
+        const minutes = Math.floor(time / 60)
+        const seconds = Math.floor(time % 60)
+        return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+    }
+    const getSegmentProgress = () => {
+        if (duration === 0) return []
+        return segments.map((segment) => {
+            const isActive = currentTime >= segment.startTime && currentTime < segment.endTime
+            return { ...segment, isActive }
+        })
+    }
+    const segmentProgress = getSegmentProgress()
+    const currentSegment = segments[currentSegmentIndex]
+    const handleSeekStart = () => setIsSeeking(true)
+    const handleSeekEnd = (value: number) => {
+        setIsSeeking(false)
+        const video = videoRef.current
+        if (!video) return
+        if (isFinite(value)) {
+            video.currentTime = value
+            setCurrentTime(value)
+        }
+    }
+    const handleSeekChange = (value: number) => {
+        setCurrentTime(value)
+    }
+    return (
+        <div className={cn("relative overflow-hidden rounded-3xl border border-white/20 backdrop-blur-[11px] w-full", className)}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}>
+            <div className="relative bg-black/85 flex items-center justify-center">
+                <video ref={videoRef} src={videoSrc} crossOrigin="anonymous" />
+                {isLoading && <LoadingOverlay />}
+                <MusicPopup show={showPopup} music={currentSegment?.music} author={currentSegment?.author} genre={currentSegment?.genre} />
+                <div className="absolute left-4 right-4 bottom-24 flex items-center">
+                    <ProgressBar
+                        value={isSeeking ? currentTime : currentTime}
+                        duration={duration}
+                        isSeeking={isSeeking}
+                        isHovering={isHovering}
+                        onSeek={handleSeekChange}
+                        onSeekStart={handleSeekStart}
+                        onSeekEnd={handleSeekEnd}
+                        segments={segmentProgress}
+                    />
+                </div>
+                <div className={cn(
+                    "absolute left-4 right-4 bottom-4 p-3 rounded-xl flex items-center",
+                    "transition-opacity duration-300",
+                    isHovering ? "opacity-100" : "opacity-0",
+                    "bg-background/10 backdrop-blur-md",
+                )}>
+                    <VideoControls
+                        isPlaying={isPlaying}
+                        isMuted={isMuted}
+                        volume={volume}
+                        playbackRate={playbackRate}
+                        skipEmptySegments={skipEmptySegments}
+                        onPlayPause={togglePlay}
+                        onMute={toggleMute}
+                        onVolumeChange={handleVolumeChange}
+                        onNext={handleNextSegment}
+                        onSkipToggle={setSkipEmptySegments}
+                        onRateChange={cyclePlaybackRate}
+                        onFullscreen={toggleFullscreen}
+                        currentTime={currentTime}
+                        duration={duration}
+                        formatTime={formatTime}
+                    />
                 </div>
             </div>
         </div>
     )
-        ;
 }

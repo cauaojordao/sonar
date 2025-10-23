@@ -37,6 +37,7 @@ const Home = () => {
             <div className="container mx-auto px-6">
 
                 {step === null ? (
+                    // mudar para componente
                     <>
                         <h1 className="mb-6 text-4xl">
                             <strong>Gerador de EDL</strong> e <strong>Identificador</strong> de trilhas sonoras
@@ -44,6 +45,8 @@ const Home = () => {
                         <FileDropzone onUpload={handleFileAccepted}/>
                     </>
                 ) : (
+
+                    // mudar para componente
                     <>
                         <div className="flex items-center gap-4">
                             <h1 className="mb-6 text-4xl">

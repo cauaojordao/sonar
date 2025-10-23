@@ -1,8 +1,8 @@
 ﻿"use client";
 
-import { useRef, useEffect, useState } from "react";
-import { useInView, motion, useScroll, useTransform } from "framer-motion";
-import { FileText, Mic, Music, Waves } from "lucide-react";
+import {useRef, useEffect, useState} from "react";
+import {useInView, motion, useScroll, useTransform} from "framer-motion";
+import {FileText, Mic, Music, Waves} from "lucide-react";
 
 function TimelineItem({
                           icon: Icon,
@@ -35,7 +35,6 @@ function TimelineItem({
         }
     }, [isInView, hasAnimated, index]);
 
-    // Alinhamento do conteúdo no desktop
     const isRight = align === "right";
 
     return (
@@ -46,9 +45,9 @@ function TimelineItem({
         flex-col sm:flex-row
         ${isRight ? "md:flex-row-reverse md:text-right" : "md:text-left"}
       `}
-            initial={{ opacity: 0, y: 50 }}
-            animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-            transition={{ duration: 0.8, delay: index * 0.2 }}
+            initial={{opacity: 0, y: 50}}
+            animate={hasAnimated ? {opacity: 1, y: 0} : {opacity: 0, y: 50}}
+            transition={{duration: 0.8, delay: index * 0.2}}
         >
             <div className="relative z-10 flex-shrink-0">
                 <motion.div
@@ -56,8 +55,8 @@ function TimelineItem({
             w-10 h-10 rounded-full border-2 flex items-center justify-center
             ${hasAnimated ? "bg-accent/20 border-primary" : "bg-accent/20 border-muted"}
           `}
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    whileHover={{scale: 1.1}}
+                    transition={{type: "spring", stiffness: 400, damping: 10}}
                 >
                     <Icon
                         className={`
@@ -76,27 +75,27 @@ function TimelineItem({
             >
                 <motion.h3
                     className="text-xl font-bold mb-3"
-                    initial={{ opacity: 0, x: isRight ? 30 : -30 }}
-                    animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: isRight ? 30 : -30 }}
-                    transition={{ duration: 0.6, delay: index * 0.2 + 0.3 }}
+                    initial={{opacity: 0, x: isRight ? 30 : -30}}
+                    animate={hasAnimated ? {opacity: 1, x: 0} : {opacity: 0, x: isRight ? 30 : -30}}
+                    transition={{duration: 0.6, delay: index * 0.2 + 0.3}}
                 >
                     {title}
                 </motion.h3>
 
                 <motion.p
                     className="text-muted-foreground text-sm leading-relaxed mb-4"
-                    initial={{ opacity: 0, x: isRight ? 30 : -30 }}
-                    animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: isRight ? 30 : -30 }}
-                    transition={{ duration: 0.6, delay: index * 0.2 + 0.4 }}
+                    initial={{opacity: 0, x: isRight ? 30 : -30}}
+                    animate={hasAnimated ? {opacity: 1, x: 0} : {opacity: 0, x: isRight ? 30 : -30}}
+                    transition={{duration: 0.6, delay: index * 0.2 + 0.4}}
                 >
                     {description}
                 </motion.p>
 
                 <motion.div
                     className="bg-muted/10 border border-border rounded-lg p-4"
-                    initial={{ opacity: 0, x: isRight ? 30 : -30 }}
-                    animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: isRight ? 30 : -30 }}
-                    transition={{ duration: 0.6, delay: index * 0.2 + 0.5 }}
+                    initial={{opacity: 0, x: isRight ? 30 : -30}}
+                    animate={hasAnimated ? {opacity: 1, x: 0} : {opacity: 0, x: isRight ? 30 : -30}}
+                    transition={{duration: 0.6, delay: index * 0.2 + 0.5}}
                 >
                     <p className="text-muted-foreground text-sm">
             <span className="text-primary font-semibold">
@@ -113,7 +112,7 @@ function TimelineItem({
 
 function ProgressLine() {
     const sectionRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
+    const {scrollYProgress} = useScroll({
         target: sectionRef,
         offset: ["start end", "end start"]
     });
@@ -124,8 +123,8 @@ function ProgressLine() {
         <div ref={sectionRef} className="absolute left-[19px] top-0 bottom-0 w-[2px] overflow-hidden">
             <motion.div
                 className="w-full bg-gradient-to-b from-accent/60 to-accent/10"
-                style={{ height }}
-                transition={{ duration: 0.5 }}
+                style={{height}}
+                transition={{duration: 0.5}}
             />
         </div>
     );
@@ -167,7 +166,8 @@ export function TimelineSection() {
         <section className="bg-background py-20 relative overflow-hidden">
             {/* Gradiente estático adaptado ao tema */}
             <div className="absolute bottom-0 right-0 w-[500px] h-[500px]">
-                <div className="absolute inset-0 bg-gradient-to-tl from-accent/20 via-accent/10 to-transparent blur-[120px] rounded-full dark:from-accent/20 dark:via-accent/10" />
+                <div
+                    className="absolute inset-0 bg-gradient-to-tl from-accent/20 via-accent/10 to-transparent blur-[120px] rounded-full dark:from-accent/20 dark:via-accent/10"/>
             </div>
 
             <div className="container mx-auto px-6 relative z-10">
@@ -183,10 +183,10 @@ export function TimelineSection() {
                 {/* Timeline */}
                 <div className="relative">
                     {/* Progress Line */}
-                    <ProgressLine />
+                    <ProgressLine/>
 
                     {/* Static line background */}
-                    <div className="absolute left-[19px] top-0 bottom-0 w-[2px] bg-muted/30" />
+                    <div className="absolute left-[19px] top-0 bottom-0 w-[2px] bg-muted/30"/>
 
                     {/* Timeline items */}
                     <div className="space-y-24">

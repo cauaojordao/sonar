@@ -1,47 +1,48 @@
-﻿import MediaPlayer from "@/components/ui/media-player";
-import { ResultSection } from "@/components/result-section";
-import EdlExportBox from "@/components/ui/edl-export-box";
+﻿import {ResultSection} from "@/components/result-section";
+import {MediaPlayer, VideoSegment} from "@/components/ui/media-player";
 
-const mockTrilhas = [
+const segments: VideoSegment[] = [
     {
-        nome: "Song A",
-        album: "Album 1",
-        ano: 2023,
-        autores: ["Autor 1", "Autor 2"],
-        generos: ["Pop", "Dance"],
-        emocoes: ["Feliz", "Energético"],
-        isrc: "US1234567890",
-        gmusic: "gmusic123",
-        ocorrencias: [
-            { inicio: "00:00:10", fim: "00:00:30" },
-            { inicio: "00:01:00", fim: "00:01:30" },
-        ],
+        id: "1",
+        music: "Summer Vibes",
+        author: "Artist One",
+        genre: "Pop",
+        startTime: 0,
+        endTime: 2,
+        color: "#FFD700",
     },
     {
-        nome: "Song B",
-        album: "Album 2",
-        ano: 2022,
-        autores: ["Autor 3"],
-        generos: ["Rock"],
-        emocoes: ["Triste"],
-        isrc: "US0987654321",
-        gmusic: "gmusic456",
-        ocorrencias: [
-            { inicio: "00:00:05", fim: "00:00:25" },
-        ],
+        id: "2",
+        music: "Chill Beats",
+        author: "Artist Two",
+        genre: "Electronic",
+        startTime: 5,
+        endTime: 6,
+        color: "#9333EA",
     },
-];
+    {
+        id: "3",
+        music: "Acoustic Dreams",
+        author: "Artist Three",
+        genre: "Acoustic",
+        startTime: 9,
+        endTime: 10,
+        color: "#4ECDC4",
+    },
+]
 
+const mockEDL = `TITLE: Projeto de Áudio
+FCM: NON-DROP FRAME
+001  AX       V     C        00:00:00:00 00:00:10:00 00:00:00:00 00:00:10:00
+002  AX       V     C        00:00:10:00 00:00:20:00 00:00:10:00 00:00:20:00`;
 
 const Resultados = () => {
+
     return (
         <div className="flex flex-col gap-24">
             <div className="container mx-auto px-6">
-                <MediaPlayer />
+                <MediaPlayer videoSrc="/freeMXF-mxf1.mp4" segments={segments}/>
             </div>
-
-            <ResultSection arquivoEDL="ProjetoEDL.edl" trilhas={mockTrilhas} />
-
         </div>
     );
 };
