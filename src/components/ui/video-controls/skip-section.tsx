@@ -4,15 +4,9 @@ import { SkipForward } from "lucide-react"
 import { Switch } from "../switch"
 import { cn } from "@/lib/utils"
 import baseGlass from "@/styles/baseGlass"
+import type { SkipSectionProps } from "@/types"
 
-interface Props {
-  onNext: () => void
-  skipEmptySegments: boolean
-  onSkipToggle: (checked: boolean) => void
-  className?: string
-}
-
-export const SkipSection: React.FC<Props> = ({ onNext, skipEmptySegments, onSkipToggle, className }) => (
+export const SkipSection: React.FC<SkipSectionProps> = ({ onNext, skipEmptySegments, onSkipToggle, className }) => (
   <div className={className ?? cn(baseGlass, "flex items-center px-3 py-1.5")}>
     <Button variant="ghost" size="icon" onClick={onNext} className="h-8 w-8 rounded-full hover:bg-white/20 text-white p-0">
       <SkipForward className="h-4 w-4" />

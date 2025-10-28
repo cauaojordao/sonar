@@ -2,14 +2,9 @@
 import { Button } from "../button"
 import { Play, Pause } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { PlayPauseButtonProps } from "@/types"
 
-interface Props {
-  isPlaying: boolean
-  onToggle: () => void
-  className?: string
-}
-
-export const PlayPauseButton: React.FC<Props> = ({ isPlaying, onToggle, className }) => (
+export const PlayPauseButton: React.FC<PlayPauseButtonProps> = ({ isPlaying, onToggle, className }) => (
   <Button
     variant="glass"
     size="icon"

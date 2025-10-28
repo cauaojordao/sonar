@@ -25,6 +25,7 @@ const buttonVariants = cva(
             },
             tone: {
                 neutral: "",
+                muted: "bg-transparent",
                 primary: "bg-gradient-to-r from-primary/60 to-bg-background/40 hover:from-primary/60 hover:to-bg-background/60",
                 secondary: "bg-gradient-to-r from-secondary/60 to-bg-background/40 hover:from-secondary/60 hover:to-bg-background/60",
             },

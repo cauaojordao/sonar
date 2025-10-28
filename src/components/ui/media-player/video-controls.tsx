@@ -6,24 +6,7 @@ import { RateButton } from "../video-controls/rate-button"
 import { FullscreenButton } from "../video-controls/fullscreen-button"
 import {cn} from "@/lib/utils";
 import baseGlass from "@/styles/baseGlass";
-
-interface VideoControlsProps {
-    isPlaying: boolean
-    isMuted: boolean
-    volume: number
-    playbackRate: number
-    skipEmptySegments: boolean
-    onPlayPause: () => void
-    onMute: () => void
-    onVolumeChange: (value: number) => void
-    onNext: () => void
-    onSkipToggle: (checked: boolean) => void
-    onRateChange: () => void
-    onFullscreen: () => void
-    currentTime: number
-    duration: number
-    formatTime: (t: number) => string
-}
+import type { VideoControlsProps } from "@/types";
 
 export const VideoControls: React.FC<VideoControlsProps> = ({
     isPlaying,

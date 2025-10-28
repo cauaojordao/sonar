@@ -2,14 +2,9 @@
 import { Button } from "../button"
 import { cn } from "@/lib/utils"
 import baseGlass from "@/styles/baseGlass"
+import type { RateButtonProps } from "@/types"
 
-interface Props {
-  rate: number
-  onClick: () => void
-  className?: string
-}
-
-export const RateButton: React.FC<Props> = ({ rate, onClick, className }) => (
+export const RateButton: React.FC<RateButtonProps> = ({ rate, onClick, className }) => (
   <Button
     variant="glass"
     size="icon"

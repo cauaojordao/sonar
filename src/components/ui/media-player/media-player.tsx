@@ -6,22 +6,7 @@ import { ProgressBar } from "@/components/ui/media-player/progress-bar"
 import { VideoControls } from "@/components/ui/media-player/video-controls"
 import { MusicPopup } from "@/components/ui/media-player/music-popup"
 import { LoadingOverlay } from "@/components/ui/media-player/loading-overlay"
-
-export interface VideoSegment {
-    id: string
-    music: string
-    author: string
-    genre: string
-    startTime: number
-    endTime: number
-    color: string
-}
-
-interface MediaPlayerProps {
-    videoSrc: string
-    segments: VideoSegment[]
-    className?: string
-}
+import type { MediaPlayerProps } from "@/types"
 
 export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null)

@@ -40,7 +40,6 @@ export function FluidGradientBackground() {
                     preserveAspectRatio="xMidYMid slice"
                     className="absolute inset-0 w-full h-full"
                 >
-                    {/* Filtro de blur animado */}
                     <defs>
                         <filter id="fluid-blur">
                             <feGaussianBlur stdDeviation="100" result="blur">
@@ -62,7 +61,7 @@ export function FluidGradientBackground() {
                             gradientUnits="userSpaceOnUse"
                         >
                             <motion.stop
-                                stopColor={mounted ? (isDark ? "#DB2777" : "#2563EB") : "#DB2777"} // Default para dark no SSR
+                                stopColor={mounted ? (isDark ? "#DB2777" : "#2563EB") : "#DB2777"}
                                 offset="0%"
                                 animate={mounted ? {
                                     stopColor: isDark
@@ -76,7 +75,7 @@ export function FluidGradientBackground() {
                                 }}
                             />
                             <motion.stop
-                                stopColor={mounted ? (isDark ? "#F59E0B" : "#06B6D4") : "#F59E0B"} // Default para dark no SSR
+                                stopColor={mounted ? (isDark ? "#F59E0B" : "#06B6D4") : "#F59E0B"}
                                 offset="84.6227%"
                                 animate={mounted ? {
                                     stopColor: isDark
@@ -93,7 +92,6 @@ export function FluidGradientBackground() {
                         </linearGradient>
                     </defs>
 
-                    {/* Forma Principal com Múltiplas Camadas */}
                     <g filter="url(#fluid-blur)">
                         <motion.path
                             d="M1880.5 525.5C1971.98 12.7196 3186.5 1287.5 1984.5 1100C782.5 912.5 -988 800 -67.5 719C853 638 -18.1142 0.5 9.5 0.5C1390.5 753.5 1789.02 1038.28 1880.5 525.5Z"
@@ -116,7 +114,6 @@ export function FluidGradientBackground() {
                         />
                     </g>
 
-                    {/* Camada de Ruído Sutil para Textura */}
                     <filter id="noiseFilter">
                         <feTurbulence
                             type="fractalNoise"
@@ -139,7 +136,7 @@ export function FluidGradientBackground() {
                         width="100%"
                         height="100%"
                         filter="url(#noiseFilter)"
-                        opacity={mounted ? (isDark ? 0.03 : 0.02) : 0.03} // Default para dark no SSR
+                        opacity={mounted ? (isDark ? 0.03 : 0.02) : 0.03}
                         animate={mounted ? {
                             opacity: isDark ? [0.03, 0.06, 0.03] : [0.02, 0.04, 0.02]
                         } : undefined}

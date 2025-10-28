@@ -1,8 +1,20 @@
-﻿/**
- * video-controls.ts
- * Props types for the VideoControls molecule and its child atoms (play/pause, volume, skip, rate, fullscreen).
- * Business logic: the controls are pure UI - they receive handler callbacks from the MediaPlayer orchestration.
- */
+import type { BaseComponent, Tone } from '../base'
+
+export interface FileDropzoneProps extends BaseComponent {
+  onUpload: (formData: FormData) => Promise<void>
+  tone?: Tone
+}
+
+export interface TextBoxProps extends BaseComponent {
+  text: string
+  fileName?: string
+  title?: string
+}
+
+export interface ProcessingTimelineProps extends BaseComponent {
+  steps: string[]
+  currentStep: number
+}
 
 export interface VideoControlsProps {
   isPlaying: boolean
@@ -22,35 +34,29 @@ export interface VideoControlsProps {
   formatTime: (t: number) => string
 }
 
-export interface PlayPauseButtonProps {
+export interface PlayPauseButtonProps extends BaseComponent {
   isPlaying: boolean
   onToggle: () => void
-  className?: string
 }
 
-export interface VolumeControlProps {
+export interface VolumeControlProps extends BaseComponent {
   isMuted: boolean
   volume: number
   onMute: () => void
   onVolumeChange: (value: number) => void
-  className?: string
 }
 
-export interface SkipSectionProps {
+export interface SkipSectionProps extends BaseComponent {
   onNext: () => void
   skipEmptySegments: boolean
   onSkipToggle: (checked: boolean) => void
-  className?: string
 }
 
-export interface RateButtonProps {
+export interface RateButtonProps extends BaseComponent {
   rate: number
   onClick: () => void
-  className?: string
 }
 
-export interface FullscreenButtonProps {
+export interface FullscreenButtonProps extends BaseComponent {
   onClick: () => void
-  className?: string
 }
-

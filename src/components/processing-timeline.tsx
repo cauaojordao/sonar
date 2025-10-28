@@ -1,21 +1,21 @@
 ﻿"use client";
 
-import {motion} from "framer-motion";
-import {Check, Loader2} from "lucide-react";
-import {cn} from "@/lib/utils";
-import {Card, CardContent} from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 import baseGlass from "@/styles/baseGlass";
-import type {ProcessingTimelineProps} from "@/components/types";
+import type { ProcessingTimelineProps } from "@/types";
 
 export function ProcessingTimeline({
-                                       steps,
-                                       currentStep,
-                                   }: ProcessingTimelineProps) {
+    steps,
+    currentStep,
+}: ProcessingTimelineProps) {
 
 
 
     return (
-        <Card className={baseGlass}>
+        <Card className={cn(baseGlass, "py-32")}>
             <CardContent>
                 <div className="flex justify-center gap-24">
                     {steps.map((label, index) => {
@@ -27,7 +27,6 @@ export function ProcessingTimeline({
                                 key={index}
                                 className="flex flex-col items-center"
                             >
-                                {/* Bola */}
                                 <motion.div
                                     className={cn(
                                         "w-12 h-12 rounded-full flex items-center justify-center relative z-10",
@@ -41,21 +40,21 @@ export function ProcessingTimeline({
                                     )}
                                     animate={
                                         isActive
-                                            ? {scale: [1, 1.1, 1]}
-                                            : {scale: 1}
+                                            ? { scale: [1, 1.1, 1] }
+                                            : { scale: 1 }
                                     }
                                     transition={
                                         isActive
-                                            ? {repeat: Infinity, duration: 1.5, ease: "easeInOut"}
-                                            : {duration: 0.4}
+                                            ? { repeat: Infinity, duration: 1.5, ease: "easeInOut" }
+                                            : { duration: 0.4 }
                                     }
                                 >
                                     {isDone ? (
-                                        <Check className="w-5 h-5 text-primary drop-shadow-[0_0_8px_rgba(233,196,106,0.6)]"/>
+                                        <Check className="w-5 h-5 text-primary drop-shadow-[0_0_8px_rgba(233,196,106,0.6)]" />
                                     ) : isActive ? (
-                                        <Loader2 className="w-5 h-5 text-secondary animate-spin drop-shadow-[0_0_8px_rgba(231,111,81,0.6)]"/>
+                                        <Loader2 className="w-5 h-5 text-secondary animate-spin drop-shadow-[0_0_8px_rgba(231,111,81,0.6)]" />
                                     ) : (
-                                        <div className="w-2.5 h-2.5 rounded-full bg-white/40"/>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-white/40" />
                                     )}
                                 </motion.div>
 

@@ -3,12 +3,9 @@ import { Button } from "../button"
 import { Maximize } from "lucide-react"
 import { cn } from "@/lib/utils"
 import baseGlass from "@/styles/baseGlass"
+import type { FullscreenButtonProps } from "@/types"
 
-interface Props {
-  onClick: () => void
-}
-
-export const FullscreenButton: React.FC<Props> = ({ onClick }) => (
+export const FullscreenButton: React.FC<FullscreenButtonProps> = ({ onClick }) => (
   <Button
     variant="glass"
     size="icon"
