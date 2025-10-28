@@ -15,9 +15,7 @@ const Home = () => {
 
     const STEPS = ["Extração", "Separação", "Identificação", "Geração de EDL"];
 
-    const handleFileAccepted = async (formData: FormData) => {
-        // aqui futuramente entrará a chamada pro back-end
-        // por enquanto, deixaremos a sequência mockada
+    const handleFileAccepted = async (_formData: FormData) => {
         setStep(0);
 
         const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

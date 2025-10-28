@@ -1,23 +1,7 @@
 ﻿import React from "react"
 import { Slider } from "../slider"
 import { SegmentBar } from "./segment-bar"
-
-interface ProgressBarProps {
-  value: number
-  duration: number
-  isSeeking: boolean
-  isHovering: boolean
-  onSeek: (value: number) => void
-  onSeekStart: () => void
-  onSeekEnd: (value: number) => void
-  segments: Array<{
-    id: string
-    startTime: number
-    endTime: number
-    color: string
-    isActive: boolean
-  }>
-}
+import type { ProgressBarProps } from "@/types"
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   value,

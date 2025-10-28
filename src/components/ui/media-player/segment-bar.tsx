@@ -1,15 +1,5 @@
 ﻿import React from "react"
-
-interface SegmentBarProps {
-  segments: Array<{
-    id: string
-    startTime: number
-    endTime: number
-    color: string
-    isActive: boolean
-  }>
-  duration: number
-}
+import type { SegmentBarProps } from "@/types"
 
 export const SegmentBar: React.FC<SegmentBarProps> = ({ segments, duration }) => (
   <>

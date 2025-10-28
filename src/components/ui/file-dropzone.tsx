@@ -6,13 +6,8 @@ import { cn } from "@/lib/utils"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { UploadCloud, FileX, CheckCircle2 } from "lucide-react"
-import baseGlass from "@/styles/baseGlass";
-
-interface FileDropzoneProps {
-    onUpload: (formData: FormData) => Promise<void> // server action
-    className?: string
-    tone?: "neutral" | "gold" | "magenta"
-}
+import baseGlass from "@/styles/baseGlass"
+import type { FileDropzoneProps } from "@/types"
 
 export function FileDropzone({
                                  onUpload,
