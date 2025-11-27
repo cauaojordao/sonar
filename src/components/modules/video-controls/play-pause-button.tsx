@@ -1,5 +1,5 @@
 ﻿import React from "react"
-import { Button } from "../button"
+import { Button } from "../../ui/button"
 import { Play, Pause } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { PlayPauseButtonProps } from "@/types"

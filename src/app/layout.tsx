@@ -1,12 +1,12 @@
 import type {Metadata} from "next";
 import "@/styles/globals.css";
 import {fontSans, fontMono} from "@/lib/fonts";
-import Header from "@/components/common/header";
+import Header from "@/components/shared/header";
 import {ThemeProvider} from "next-themes";
-import {Footer} from "@/components/common/footer";
+import {Footer} from "@/components/shared/footer";
 import React from "react";
-import {DynamicBreadcrumb} from "@/components/common/dynamic-breadcrumb";
-import {FluidGradientBackground} from "@/components/common/background-svg";
+import {DynamicBreadcrumb} from "@/components/shared/dynamic-breadcrumb";
+import {FluidGradientBackground} from "@/components/shared/background-svg";
 
 export const metadata: Metadata = {
     title: "Sonar",

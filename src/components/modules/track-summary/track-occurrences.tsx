@@ -5,7 +5,7 @@ import {ChevronDown, Clock} from "lucide-react"
 import type {TrackOccurrencesProps} from "@/types"
 import {cn} from "@/lib/utils"
 import baseGlass from "@/styles/baseGlass"
-import {Button} from "../button"
+import {Button} from "../../ui/button"
 
 function formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60)

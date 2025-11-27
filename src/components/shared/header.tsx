@@ -1,6 +1,6 @@
 ﻿import Link from "next/link"
 import {Button} from "@/components/ui/button"
-import ThemeToggler from "@/components/ui/theme-toggler";
+import ThemeToggler from "@/components/shared/theme-toggler";
 
 export default function Header() {
     return (

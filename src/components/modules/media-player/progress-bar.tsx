@@ -1,5 +1,5 @@
 ﻿import React from "react"
-import { Slider } from "../slider"
+import { Slider } from "../../ui/slider"
 import { SegmentBar } from "./segment-bar"
 import type { ProgressBarProps } from "@/types"
 

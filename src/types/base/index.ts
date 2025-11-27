@@ -1,24 +1,13 @@
-import { PLAYBACK_RATES } from '../constants'
+import { PLAYBACK_RATES } from '@/types'
 
 export interface BaseComponent {
   className?: string
   children?: React.ReactNode
 }
 
-export interface BaseProps {
-  id?: string
-  'data-testid'?: string
-}
-
 export interface TimeRange {
   startTime: number
   endTime: number
-}
-
-export interface TimeFormat {
-  hours: number
-  minutes: number
-  seconds: number
 }
 
 export type Tone = 'neutral' | 'gold' | 'magenta'

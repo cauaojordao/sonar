@@ -1,5 +1,5 @@
 ﻿import React from "react"
-import { Button } from "../button"
+import { Button } from "../../ui/button"
 import { Maximize } from "lucide-react"
 import { cn } from "@/lib/utils"
 import baseGlass from "@/styles/baseGlass"

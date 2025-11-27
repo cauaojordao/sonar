@@ -4,7 +4,7 @@ import React from "react"
 import {User, Disc} from "lucide-react"
 import type {TrackCardProps} from "@/types"
 import Image from "next/image"
-import {TrackOccurrences} from "@/components/ui/track-summary/track-occurrences"
+import {TrackOccurrences} from "@/components/modules/track-summary/track-occurrences"
 import {cn} from "@/lib/utils";
 import baseGlass from "@/styles/baseGlass";
 

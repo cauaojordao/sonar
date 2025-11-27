@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
-import EdlExportBox from "@/components/ui/edl-export-box";
-import { TracksSummary } from "@/components/ui/track-summary/tracks-summary";
+import EdlExportBox from "@/components/modules/edl-box/edl-export-box";
+import { TracksSummary } from "@/components/modules/track-summary/tracks-summary";
 import type { ResultSectionProps } from "@/types";
 
 export function ResultSection({ edlFile, tracks }: ResultSectionProps) {

@@ -1,7 +1,7 @@
-import type { BaseComponent, Tone } from '../base'
+import type { BaseComponent, Tone } from '@/types/base'
 
 export interface FileDropzoneProps extends BaseComponent {
-  onUpload: (formData: FormData) => Promise<void>
+  onUpload: (file: File | Blob) => Promise<void>
   tone?: Tone
 }
 
