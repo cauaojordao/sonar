@@ -1,5 +1,5 @@
-﻿import { ResultSection } from "@/components/result-section";
-import { MediaPlayer } from "@/components/ui/media-player/media-player";
+﻿import { ResultSection } from "@/components/layouts/result-section";
+import { MediaPlayer } from "@/components/modules/media-player/media-player";
 import type { VideoSegment } from "@/types";
 
 const generateRandomColorHexCode = () => {

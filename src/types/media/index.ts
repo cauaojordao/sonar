@@ -1,4 +1,4 @@
-import type { TimeRange, MediaState, MediaControls } from '../base'
+import type { TimeRange, MediaState, MediaControls } from '@/types/base'
 
 export interface VideoSegment extends TimeRange {
   id: string

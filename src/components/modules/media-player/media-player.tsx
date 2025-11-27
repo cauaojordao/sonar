@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect, useCallback } from "react"
 import { cn } from "@/lib/utils"
-import { ProgressBar } from "@/components/ui/media-player/progress-bar"
-import { VideoControls } from "@/components/ui/media-player/video-controls"
-import { MusicPopup } from "@/components/ui/media-player/music-popup"
-import { LoadingOverlay } from "@/components/ui/media-player/loading-overlay"
+import { ProgressBar } from "@/components/modules/media-player/progress-bar"
+import { VideoControls } from "@/components/modules/media-player/video-controls"
+import { MusicPopup } from "@/components/modules/media-player/music-popup"
+import { LoadingOverlay } from "@/components/modules/media-player/loading-overlay"
 import type { MediaPlayerProps } from "@/types"
 
 export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps) {
