@@ -1,14 +1,15 @@
 ﻿"use client"
 
-import { useState, useRef, useEffect, useCallback } from "react"
-import { cn } from "@/lib/utils"
-import { ProgressBar } from "@/components/modules/media-player/progress-bar"
-import { VideoControls } from "@/components/modules/media-player/video-controls"
-import { MusicPopup } from "@/components/modules/media-player/music-popup"
-import { LoadingOverlay } from "@/components/modules/media-player/loading-overlay"
-import type { MediaPlayerProps } from "@/types"
+import {useState, useRef, useEffect, useCallback} from "react"
+import {cn} from "@/lib/utils"
+import {ProgressBar} from "@/components/modules/media-player/progress-bar"
+import {VideoControls} from "@/components/modules/media-player/video-controls"
+import {MusicPopup} from "@/components/modules/media-player/music-popup"
+import {LoadingOverlay} from "@/components/modules/media-player/loading-overlay"
+import Hls from "hls.js";
+import type {MediaPlayerProps} from "@/types"
 
-export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps) {
+export function MediaPlayer({videoSrc, segments, className}: MediaPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [currentTime, setCurrentTime] = useState(0)
@@ -44,47 +45,75 @@ export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps)
     }, [currentSegmentIndex, segments])
 
     useEffect(() => {
-        const video = videoRef.current
-        if (!video) return
-        const handleLoadedMetadata = () => setDuration(video.duration)
-        const handleTimeUpdate = () => {
-            const t = video.currentTime
-            setCurrentTime(t)
-            const newIndex = segments.findIndex(seg => t >= seg.startTime && t < seg.endTime)
-            if (newIndex !== currentSegmentIndex) {
-                setCurrentSegmentIndex(newIndex)
+        if (!videoSrc) return;
+
+        const video = videoRef.current;
+        if (!video) return;
+
+        // sempre MP4
+        video.src = videoSrc;
+
+        const handleLoadedMetadata = () => {
+            if (isFinite(video.duration)) {
+                setDuration(video.duration);
             }
-            if (skipEmptySegments) {
-                const currentSegment = segments[newIndex]
-                if ((!currentSegment || !currentSegment.music) && !segmentTransitionRef.current) {
-                    segmentTransitionRef.current = true
-                    const next = segments.find(seg => seg.startTime > t && seg.music)
-                    if (next) {
-                        video.currentTime = next.startTime
-                        setCurrentSegmentIndex(segments.indexOf(next))
-                    } else {
-                        video.pause()
-                        setIsPlaying(false)
-                    }
-                    setTimeout(() => {
-                        segmentTransitionRef.current = false
-                    }, 200)
-                }
-            } else {
-                segmentTransitionRef.current = false
-            }
-        }
-        const handleEnded = () => setIsPlaying(false)
-        video.addEventListener("loadedmetadata", handleLoadedMetadata)
-        video.addEventListener("timeupdate", handleTimeUpdate)
-        video.addEventListener("ended", handleEnded)
-        if (video.readyState >= 1) setDuration(video.duration)
+        };
+
+        video.addEventListener("loadedmetadata", handleLoadedMetadata);
+
         return () => {
-            video.removeEventListener("loadedmetadata", handleLoadedMetadata)
-            video.removeEventListener("timeupdate", handleTimeUpdate)
-            video.removeEventListener("ended", handleEnded)
-        }
-    }, [segments, skipEmptySegments, currentSegmentIndex, handleNextSegment])
+            video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+        };
+    }, [videoSrc]);
+
+    // Listeners fixos do vídeo
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        const handleTimeUpdate = () => {
+            const t = video.currentTime;
+            setCurrentTime(t);
+
+            // Atualiza segmento atual
+            const newIndex = segments.findIndex(
+                seg => t >= seg.startTime && t < seg.endTime
+            );
+
+            setCurrentSegmentIndex(newIndex);
+
+            // Skip automático
+            if (skipEmptySegments) {
+                const seg = segments[newIndex];
+
+                if ((!seg || !seg.music) && !segmentTransitionRef.current) {
+                    segmentTransitionRef.current = true;
+
+                    const next = segments.find(s => s.startTime > t && s.music);
+                    if (next) {
+                        video.currentTime = next.startTime;
+                    } else {
+                        video.pause();
+                        setIsPlaying(false);
+                    }
+
+                    setTimeout(() => {
+                        segmentTransitionRef.current = false;
+                    }, 150);
+                }
+            }
+        };
+
+        const handleEnded = () => setIsPlaying(false);
+
+        video.addEventListener("timeupdate", handleTimeUpdate);
+        video.addEventListener("ended", handleEnded);
+
+        return () => {
+            video.removeEventListener("timeupdate", handleTimeUpdate);
+            video.removeEventListener("ended", handleEnded);
+        };
+    }, [segments, skipEmptySegments]);
 
     useEffect(() => {
         if (popupTimeoutRef.current) {
@@ -109,25 +138,28 @@ export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps)
         }
     }, [currentSegmentIndex, segments])
 
+    // Loading realmente baseado no readyState e buffer
     useEffect(() => {
-        if (!isPlaying) {
-            setIsLoading(false)
-            return
-        }
-        const lastTime = currentTime
-        let timeout: NodeJS.Timeout | null = null
-        function checkStuck() {
-            if (isPlaying && videoRef.current && Math.abs(videoRef.current.currentTime - lastTime) < 0.01) {
-                setIsLoading(true)
-            } else {
-                setIsLoading(false)
+        const video = videoRef.current;
+        if (!video) return;
+
+        const interval = setInterval(() => {
+            if (!isPlaying) {
+                setIsLoading(false);
+                return;
             }
-        }
-        timeout = setTimeout(checkStuck, 600)
-        return () => {
-            if (timeout) clearTimeout(timeout)
-        }
-    }, [isPlaying, currentTime])
+
+            // readyState 4: have enough data to play
+            if (video.readyState < 3) {
+                setIsLoading(true);
+            } else {
+                setIsLoading(false);
+            }
+        }, 300);
+
+        return () => clearInterval(interval);
+    }, [isPlaying]);
+
 
     const togglePlay = () => {
         const video = videoRef.current
@@ -135,7 +167,8 @@ export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps)
         if (isPlaying) {
             video.pause()
         } else {
-            video.play().catch(() => {})
+            video.play().catch(() => {
+            })
         }
         setIsPlaying(!isPlaying)
     }
@@ -191,7 +224,7 @@ export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps)
         if (duration === 0) return []
         return segments.map((segment) => {
             const isActive = currentTime >= segment.startTime && currentTime < segment.endTime
-            return { ...segment, isActive }
+            return {...segment, isActive}
         })
     }
     const segmentProgress = getSegmentProgress()
@@ -210,13 +243,15 @@ export function MediaPlayer({ videoSrc, segments, className }: MediaPlayerProps)
         setCurrentTime(value)
     }
     return (
-        <div className={cn("relative overflow-hidden rounded-3xl border border-white/20 backdrop-blur-[11px] w-full", className)}
+        <div
+            className={cn("relative overflow-hidden rounded-3xl border border-white/20 backdrop-blur-[11px] w-full", className)}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}>
             <div className="relative bg-black/85 flex items-center justify-center">
-                <video ref={videoRef} src={videoSrc} crossOrigin="anonymous" />
-                {isLoading && <LoadingOverlay />}
-                <MusicPopup show={showPopup} music={currentSegment?.music} author={currentSegment?.author} genre={currentSegment?.genre} />
+                <video ref={videoRef} src={videoSrc} crossOrigin="anonymous"/>
+                {isLoading && <LoadingOverlay/>}
+                <MusicPopup show={showPopup} music={currentSegment?.music} author={currentSegment?.author}
+                            genre={currentSegment?.genre}/>
                 <div className="absolute left-4 right-4 bottom-24 flex items-center">
                     <ProgressBar
                         value={isSeeking ? currentTime : currentTime}

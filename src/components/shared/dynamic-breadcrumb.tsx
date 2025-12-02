@@ -36,6 +36,7 @@ function DynamicBreadcrumb({
                                customLabels = {},
                                ...props
                            }: DynamicBreadcrumbProps & React.ComponentProps<"nav">) {
+
     const router = useRouter()
     const pathname = usePathname()
 
@@ -43,8 +44,7 @@ function DynamicBreadcrumb({
         if (!pathname) return []
 
         const cleanPathname = pathname.split('?')[0].split('#')[0]
-
-        const segments = cleanPathname.split('/').filter(segment => segment !== '')
+        const segments = cleanPathname.split('/').filter(Boolean)
 
         const items: BreadcrumbItemConfig[] = []
 
@@ -60,9 +60,9 @@ function DynamicBreadcrumb({
         segments.forEach((segment, index) => {
             accumulatedPath += `/${segment}`
 
-            const label = customLabels[segment] ||
-                customLabels[accumulatedPath] ||
-                formatSegmentLabel(segment)
+            const label = customLabels[segment]
+                || customLabels[accumulatedPath]
+                || formatSegmentLabel(segment)
 
             items.push({
                 label,
@@ -81,10 +81,21 @@ function DynamicBreadcrumb({
             .replace(/\b(a|e|o|de|do|da|dos|das|em|por)\b/gi, match => match.toLowerCase())
     }
 
+    const shouldDisplaySegment = (label: string): boolean => {
+        // remove espaços para validação
+        const plain = label.replace(/\s+/g, "")
+
+        // mais de 10 letras
+        if (plain.length > 10) return false
+
+        // apenas números
+        if (/^\d+$/.test(plain)) return false
+
+        return true
+    }
+
     const getTruncatedItems = (items: BreadcrumbItemConfig[]): BreadcrumbItemConfig[] => {
-        if (items.length <= maxItems) {
-            return items
-        }
+        if (items.length <= maxItems) return items
 
         const firstItem = items[0]
         const lastTwoItems = items.slice(-2)
@@ -101,11 +112,16 @@ function DynamicBreadcrumb({
         ]
     }
 
-    const breadcrumbItems = getTruncatedItems(generateBreadcrumbItems())
+    // 1) gera items
+    let breadcrumbItems = generateBreadcrumbItems()
 
-    if (breadcrumbItems.length === 0) {
-        return null
-    }
+    // 2) filtra os segmentos
+    breadcrumbItems = breadcrumbItems.filter(item => shouldDisplaySegment(item.label))
+
+    // 3) aplica truncamento
+    breadcrumbItems = getTruncatedItems(breadcrumbItems)
+
+    if (breadcrumbItems.length === 0) return null
 
     return (
         <Breadcrumb
@@ -119,19 +135,19 @@ function DynamicBreadcrumb({
                         <BreadcrumbItem className="flex items-center">
                             {item.isCurrent ? (
                                 <BreadcrumbPage className="flex gap-1 items-center">
-                                    {index === 0 && showHome && <Home className="size-4"/>}
+                                    {index === 0 && showHome && <Home className="size-4" />}
                                     {item.label}
                                 </BreadcrumbPage>
                             ) : (
                                 <BreadcrumbLink
                                     href={item.href}
                                     className="flex gap-1 items-center hover:text-foreground/80 transition-colors"
-                                    onClick={(e) => {
+                                    onClick={e => {
                                         e.preventDefault()
                                         router.push(item.href)
                                     }}
                                 >
-                                    {index === 0 && showHome && <Home className="size-4"/>}
+                                    {index === 0 && showHome && <Home className="size-4" />}
                                     {item.label}
                                 </BreadcrumbLink>
                             )}

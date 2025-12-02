@@ -49,10 +49,10 @@ export function TrackCard({track}: TrackCardProps) {
                         {track.genres.map((genre, i) => (
                             <div className="text-xs flex flex-col gap-2" key={i}>
                                 <strong>Gêneros:</strong>
-                            <span
-                                key={i}
-                                className={cn(baseGlass, "flex items-center justify-center px-3 py-1 rounded-full")}
-                            >
+                                <span
+                                    key={i}
+                                    className={cn(baseGlass, "flex items-center justify-center px-3 py-1 rounded-full")}
+                                >
                                 {genre}
                             </span>
                             </div>
@@ -65,10 +65,10 @@ export function TrackCard({track}: TrackCardProps) {
                     </div>
                 </div>
             </div>
-            <TrackOccurrences
+            {track.occurrences.length > 0 && <TrackOccurrences
                 occurrences={track.occurrences}
                 hasMultiple={hasMultipleOccurrences}
-            />
+            />}
         </div>
     )
 }

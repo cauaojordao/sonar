@@ -164,7 +164,6 @@ export function TimelineSection() {
 
     return (
         <section className="bg-background py-20 relative overflow-hidden">
-            {/* Gradiente estático adaptado ao tema */}
             <div className="absolute bottom-0 right-0 w-[500px] h-[500px]">
                 <div
                     className="absolute inset-0 bg-gradient-to-tl from-accent/20 via-accent/10 to-transparent blur-[120px] rounded-full dark:from-accent/20 dark:via-accent/10"/>
@@ -176,19 +175,15 @@ export function TimelineSection() {
                         ENTENDA MAIS
                     </p>
                     <h2 className="text-3xl md:text-4xl">
-                        <strong>Automatizando</strong> processos com <strong>inteligência artificial</strong>
+                        <strong>Automatizando</strong> processos com <strong>algoritmos e fingerprint</strong>
                     </h2>
                 </div>
 
-                {/* Timeline */}
                 <div className="relative">
-                    {/* Progress Line */}
                     <ProgressLine/>
 
-                    {/* Static line background */}
                     <div className="absolute left-[19px] top-0 bottom-0 w-[2px] bg-muted/30"/>
 
-                    {/* Timeline items */}
                     <div className="space-y-24">
                         {timelineItems.map((item, index) => (
                             <TimelineItem

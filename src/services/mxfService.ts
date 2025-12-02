@@ -1,19 +1,43 @@
-﻿import {api} from "@/lib/apiClient";
+﻿export async function getMxfStatus(id: string) {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_MXF_TO_MP4_URL}/v1/mxf/${id}`);
 
-async function upload(file: File | Blob){
-    const formData = new FormData();
-    formData.append('file', file);
+    if (!resp.ok) {
+        throw new Error("Erro ao consultar status");
+    }
 
-    return await api('/mxf', {
-        method: 'POST',
-        body: formData,
+    return resp.json();
+}
+export async function getMxfEdlStatus(id: number) {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_MXF_TO_EDL_URL}/v1/mxf/${id}`);
+
+    if (!resp.ok) {
+        throw new Error("Erro ao consultar status");
+    }
+
+    return resp.json();
+}
+
+export async function uploadMxf(formData: FormData) {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_MXF_TO_MP4_URL}/v1/mxf/upload`, {
+        method: "POST",
+        body: formData
     });
-}
 
-export async function getStatus(id: string){
-    return api(`/mxf?id=${id}`);
-}
+    if (!resp.ok) {
+        throw new Error("Falha ao enviar arquivo.");
+    }
 
-export{
-    upload
+    return resp.json();
+}
+export async function uploadEdlMxf(formData: FormData) {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_MXF_TO_EDL_URL}/v1/mxf`, {
+        method: "POST",
+        body: formData
+    });
+
+    if (!resp.ok) {
+        throw new Error("Falha ao enviar arquivo.");
+    }
+
+    return resp.json();
 }

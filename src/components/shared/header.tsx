@@ -11,21 +11,15 @@ export default function Header() {
                         S<span className="text-primary">O</span>NAR
                     </Link>
                     <nav className="hidden md:flex items-center gap-6">
-                        <Link href="#" className="text-sm transition-colors hover:text-primary">
-                            Funcionalidades
+                        <Link href="/" className="text-sm transition-colors hover:text-primary">
+                            Enviar Arquivo
                         </Link>
-                        <Link href="#" className="text-sm transition-colors hover:text-primary">
-                            Documentação
-                        </Link>
-                        <Link href="#" className="text-sm transition-colors hover:text-primary">
+                        <Link href="/" className="text-sm transition-colors hover:text-primary">
                             Sobre nós
                         </Link>
                     </nav>
                     <div className="flex items-center gap-4">
                         <ThemeToggler/>
-                        <Button className="bg-background cursor-pointer" variant="glass">
-                            Logout
-                        </Button>
                     </div>
                 </div>
             </div>
