@@ -5,7 +5,8 @@ import {ResultSection} from "@/components/layouts/result-section";
 import {MediaPlayer} from "@/components/modules/media-player/media-player";
 import {
     getMxfStatus,
-    getMxfEdlStatus
+    getMxfEdlStatus,
+    downloadEdl
 } from "@/services/mxfService";
 import {VideoSegment} from "@/types";
 
@@ -58,7 +59,9 @@ export default function ResultClient({mp4Id, edlId}: { mp4Id: string; edlId: str
 
             const edlResp = await getMxfEdlStatus(Number(edlId));
             setTracks(edlResp.audio_tracks || []);
-            setEdlText(edlResp.edl_text || "Edl não disponível.");
+            
+            const edlTExt = await downloadEdl(Number(edlResp.edl_id));
+            setEdlText(edlTExt.edl_text || "Edl não disponível.");
 
             setLoading(false);
         }

@@ -41,3 +41,15 @@ export async function uploadEdlMxf(formData: FormData) {
 
     return resp.json();
 }
+
+export async function downloadEdl(id: number) {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_MXF_TO_EDL_URL}/v1/edl/${id}/download`);
+
+    if (!resp.ok) {
+        throw new Error("Falha ao obter arquivo.");
+    }
+
+    const fileText = await resp.text();
+
+    return { edl_text: fileText };
+}
