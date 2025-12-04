@@ -1,0 +1,14 @@
+﻿services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_MXF_TO_EDL_URL={NEXT_PUBLIC_MXF_TO_EDL_URL}
+      - NEXT_PUBLIC_MXF_TO_MP4_URL={NEXT_PUBLIC_MXF_TO_MP4_URL}
+    env_file:
+      - .env
+    restart: unless-stopped
